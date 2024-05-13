@@ -1,0 +1,20 @@
+<script>
+    window.onload = function() {
+        // Replace 'defaultEventId' with the ID of the event you want to set as default
+        var defaultEventId = "your_default_event_id";
+
+        // Find the select element
+        var eventSelect = document.getElementById("eventId");
+
+        // Loop through options to find the default event
+        for (var i = 0; i < eventSelect.options.length; i++) {
+            if (eventSelect.options[i].value === defaultEventId) {
+                // Set the default event as selected
+                eventSelect.selectedIndex = i;
+                // Call the function to populate categories for the default event
+                populateCategories();
+                break;
+            }
+        }
+    }
+</script>

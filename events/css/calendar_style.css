@@ -1,0 +1,74 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Style for the calendar table */
+table.calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.calendar th {
+    background-color: #333;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px;
+}
+
+table.calendar th,
+table.calendar td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px;
+}
+
+table.calendar a {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+table.calendar a:hover {
+    background-color: #45a049;
+    color: #fff;
+}
+
+/* Style for the event list */
+#eventList {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+	margin-top: 20px;
+}
+
+#eventList h3 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+#eventList ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#eventList li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#eventList li:last-child {
+    border-bottom: none;
+}
