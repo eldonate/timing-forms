@@ -2,10 +2,11 @@
 // Check if the event ID is set in the query string
 if (isset($_GET["eventId"])) {
     // Database credentials
-    $servername = "localhost";
-    $username = "events_user";
-    $password = "Uad0cAm5d008_8_7d8";
-    $dbname = "events";
+    include_once 'config.php';
+    $servername = DB_HOST;
+    $username = DB_USER;
+    $password = DB_PASSWORD;
+    $dbname = DB_NAME;
 
     // Connect to the database
     $conn = new mysqli($servername, $username, $password, $dbname);
