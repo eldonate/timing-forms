@@ -4,10 +4,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if eventId is set and not empty
     if (isset($_POST["eventId"]) && !empty($_POST["eventId"])) {
         // DB credentials
-        $servername = "localhost";
-        $username = "events_user";
-        $password = "Uad0cAm5d008_8_7d8";
-        $dbname = "events";
+        include_once 'config.php';
+        $servername = DB_HOST;
+        $username = DB_USER;
+        $password = DB_PASSWORD;
+        $dbname = DB_NAME;
 
         // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
