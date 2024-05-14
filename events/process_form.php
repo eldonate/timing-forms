@@ -1,10 +1,10 @@
 <?php
 // DB credentials
 include_once 'config.php';
-$servername = getenv('DB_HOST');
-$username = getenv('DB_USER');
-$password = getenv('DB_PASSWORD');
-$dbname =  getenv('DB_NAME');
+$servername = DB_HOST;
+$username = DB_USER;
+$password = DB_PASSWORD;
+$dbname = DB_NAME;
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
