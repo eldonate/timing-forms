@@ -16,10 +16,11 @@
             $eventId = $_POST["eventId"];
 
             // Connect to the database
-            $servername = "localhost";
-            $username = "events_user";
-            $password = "Uad0cAm5d008_8_7d8";
-            $dbname = "events";
+            include_once 'config.php';
+            $servername = DB_HOST;
+            $username = DB_USER;
+            $password = DB_PASSWORD;
+            $dbname = DB_NAME;
             $conn = new mysqli($servername, $username, $password, $dbname);
             if ($conn->connect_error) {
                 die("Connection failed: " . $conn->connect_error);
