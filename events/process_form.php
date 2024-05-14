@@ -1,6 +1,6 @@
 <?php
 // DB credentials
-include_once '/etc/config/config.php';
+include_once 'config.php';
 $servername = getenv('DB_HOST');
 $username = getenv('DB_USER');
 $password = getenv('DB_PASSWORD');
