@@ -35,11 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("INSERT INTO registrations (event_id, category_name, first_name, last_name, dob, sex, team, phone_number, city, safety_number, t_shirt_size, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssssssss", $eventId, $categoryName, $firstName, $lastName, $dob, $sex, $team, $phoneNumber, $city, $safetyNumber, $tShirtSize, $email);
     if ($stmt->execute()) {
-        // Prepare and execute SQL statement to fetch event website from the database
-        $fetchStmt = $conn->prepare("SELECT event_website FROM events WHERE Id=?");
+        // Prepare and execute SQL statement to fetch event name and website from the database
+        $fetchStmt = $conn->prepare("SELECT event_name, event_website FROM events WHERE Id=?");
         $fetchStmt->bind_param("i", $eventId);
         $fetchStmt->execute();
-        $fetchStmt->bind_result($eventWebsite);
+        $fetchStmt->bind_result($eventName, $eventWebsite);
         $fetchStmt->fetch();
         $fetchStmt->close();
         
@@ -62,13 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Port = SMTP_PORT; // Use SMTP port from config.php
 
             //Recipients
-            $mail->setFrom('info@racetime.gr', 'Your Name');
+            $mail->setFrom('info@racetime.gr', 'Race Time');
             $mail->addAddress($email); // Add a recipient
 
             //Content
             $mail->isHTML(true); // Set email format to HTML
-            $mail->Subject = 'Registration Confirmation';
-            $mail->Body    = 'Thank you for registering for the event!';
+            $mail->Subject = 'Επιβεβαίωση Εγγραφής';
+            $mail->Body    = "Ευχαριστούμε για την εγγραφή σας στον '$eventName'!";
 
             $mail->send();
             echo "<center><h1>Registration successful! <br> Please wait...</h1></center>";
