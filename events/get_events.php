@@ -1,10 +1,11 @@
 <?php
 // Database connection
-    include_once 'config.php';
-    $servername = DB_HOST;
-    $username = DB_USER;
-    $password = DB_PASSWORD;
-    $dbname = DB_NAME;
+include_once 'config.php';
+$servername = DB_HOST;
+$username = DB_USER;
+$password = DB_PASSWORD;
+$dbname = DB_NAME;
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
@@ -12,10 +13,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch events for the selected date
+// Fetch events for the selected date using parameterized query
 $date = $_GET['date'];
-$sql = "SELECT * FROM events WHERE event_date = '$date'";
-$result = $conn->query($sql);
+$sql = "SELECT * FROM events WHERE event_date = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $date);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     // Output events
@@ -29,6 +33,7 @@ if ($result->num_rows > 0) {
     echo "No events found for $date";
 }
 
-// Close connection
+// Close statement and connection
+$stmt->close();
 $conn->close();
 ?>
