@@ -1,4 +1,12 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '/var/www/vhosts/racetime.gr/PHPMailer/src/Exception.php';
+require '/var/www/vhosts/racetime.gr/PHPMailer/src/PHPMailer.php';
+require '/var/www/vhosts/racetime.gr/PHPMailer/src/SMTP.php';
+require_once 'config.php'; // Include the configuration file
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
@@ -17,13 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Additional processing can be done here, such as validation and sanitization of input data
 
-    // Connect to the database
-    include_once 'config.php';
-    $servername = DB_HOST;
-    $username = DB_USER;
-    $password = DB_PASSWORD;
-    $dbname = DB_NAME;
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Connect to the database using credentials from config.php
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
@@ -45,9 +48,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Close the database connection
         $conn->close();
         
-        // Redirect to event website after 3 seconds
-        echo "<center><h1>Registration successful! <br> Please wait...</h1></center>";
-        echo "<script>setTimeout(function() { window.location.href = '{$eventWebsite}'; }, 3000);</script>";
+        // Send email using PHPMailer
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings
+            $mail->isSMTP();
+            $mail->Host = SMTP_HOST; // Use SMTP host from config.php
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTP_USERNAME; // Use SMTP username from config.php
+            $mail->Password = SMTP_PASSWORD; // Use SMTP password from config.php
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = SMTP_PORT; // Use SMTP port from config.php
+
+            //Recipients
+            $mail->setFrom('info@racetime.gr', 'Your Name');
+            $mail->addAddress($email); // Add a recipient
+
+            //Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = 'Registration Confirmation';
+            $mail->Body    = 'Thank you for registering for the event!';
+
+            $mail->send();
+            echo "<center><h1>Registration successful! <br> Please wait...</h1></center>";
+            echo "<script>setTimeout(function() { window.location.href = '{$eventWebsite}'; }, 3000);</script>";
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
     } else {
         echo "Error: " . $stmt->error;
         // Close the statement and database connection
