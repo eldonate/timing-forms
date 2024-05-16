@@ -23,10 +23,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Function to fetch events for a given date
+// Function to fetch events for a given date (with parameterized query)
 function getEvents($date, $conn) {
-    $sql = "SELECT * FROM events WHERE event_date = '$date'";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM events WHERE event_date = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     $events = array();
     
@@ -115,6 +118,24 @@ echo "</div>";
 // Close connection
 $conn->close();
 ?>
+
+
+<script>
+function showEvents(date) {
+    // Fetch events for the selected date via AJAX
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("eventList").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "get_events.php?date=" + date, true);
+    xhttp.send();
+}
+</script>
+</body>
+</html>
+
 
 
 <script>
