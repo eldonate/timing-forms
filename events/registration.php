@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Event Registration</title>
+    <title>Race Time - Registration Form</title>
     <link rel="stylesheet" type="text/css" href="css/registration_style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h2>Event Registration</h2>
+    <h2>Registration Form</h2>
     <form action="process_registration.php" method="post" id="registrationForm">
-        <label for="eventId">Select Event:</label><br>
+        <label for="eventId">Επιλογή αγώνα:</label><br>
         <select id="eventId" name="eventId" required onchange="populateCategories()">
-            <option value="">Select Event</option>
+            <option value="">Επιλέξτε αγώνα</option>
             <?php
             // Connect to the database
 	        include_once 'config.php';
@@ -35,39 +35,39 @@
             ?>
         </select><br><br>
 
-        <label for="categoryName">Select Category:</label><br>
+        <label for="categoryName">Κατηγορία:</label><br>
         <select id="categoryName" name="categoryName" required disabled>
-            <option value="">Select Event First</option>
+            <option value="">Επιλέξτε κατηγορία</option>
         </select><br><br>
 
-        <label for="firstName">First Name:</label><br>
+        <label for="firstName">Όνομα:</label><br>
         <input type="text" id="firstName" name="firstName" required><br><br>
 
-        <label for="lastName">Last Name:</label><br>
+        <label for="lastName">Επίθετο:</label><br>
         <input type="text" id="lastName" name="lastName" required><br><br>
 
-        <label for="dob">Date of Birth:</label><br>
+        <label for="dob">Ημ. Γέννησης:</label><br>
         <input type="date" id="dob" name="dob" required><br><br>
 
-        <label for="sex">Sex:</label><br>
+        <label for="sex">Φύλο:</label><br>
         <select id="sex" name="sex" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+            <option value="Male">Άνδρας</option>
+            <option value="Female">Γυναίκα</option>
         </select><br><br>
 
-        <label for="team">Team:</label><br>
+        <label for="team">Ομάδα:</label><br>
         <input type="text" id="team" name="team"><br><br>
 
-        <label for="phoneNumber">Phone Number:</label><br>
+        <label for="phoneNumber">Τηλ. Επικοινωνίας:</label><br>
         <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10}" required><br><br>
 
-        <label for="city">City:</label><br>
+        <label for="city">Πόλη:</label><br>
         <input type="text" id="city" name="city" required><br><br>
 
-        <label for="safetyNumber">Safety Number:</label><br>
+        <label for="safetyNumber">Τηλ. Έκτακτης Ανάγκης:</label><br>
         <input type="text" id="safetyNumber" name="safetyNumber"><br><br>
 
-        <label for="tShirtSize">T-Shirt Size:</label><br>
+        <label for="tShirtSize">Μέγεθος Μπλούζας:</label><br>
         <select id="tShirtSize" name="tShirtSize" required>
             <option value="S">S</option>
             <option value="M">M</option>
@@ -78,7 +78,7 @@
         <input type="email" id="email" name="email" required><br><br>
 
         <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
-        <label for="acceptTerms">I accept the terms</label><br><br>
+        <label for="acceptTerms">Αποδέχομαι τους <a href="#">όρους χρήσης</a></label><br><br>
 
         <input type="submit" value="Register">
     </form>
