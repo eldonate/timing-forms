@@ -12,27 +12,36 @@
         <select id="eventId" name="eventId" required onchange="populateCategories()">
             <option value="">Επιλέξτε αγώνα</option>
             <?php
-            // Connect to the database
-	        include_once 'config.php';
- 	       $servername = DB_HOST;
- 	       $username = DB_USER;
- 	       $password = DB_PASSWORD;
- 	       $dbname = DB_NAME;
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-            }
+include_once 'config.php';
+$servername = DB_HOST;
+$username = DB_USER;
+$password = DB_PASSWORD;
+$dbname = DB_NAME;
 
-            // Retrieve events from the database
-            $sql = "SELECT id, event_name FROM events";
-            $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<option value='" . $row["id"] . "'>" . $row["event_name"] . "</option>";
-                }
-            }
-            $conn->close();
-            ?>
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Retrieve events from the database using prepared statement
+$sql = "SELECT id, event_name FROM events";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["event_name"]) . "</option>";
+    }
+}
+
+$stmt->close();
+$conn->close();
+?>
+
         </select><br><br>
 
         <label for="categoryName">Κατηγορία:</label><br>
