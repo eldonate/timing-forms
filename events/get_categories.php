@@ -1,6 +1,6 @@
 <?php
-// Check if the event ID is set in the query string
-if (isset($_GET["eventId"])) {
+// Check if the event ID is set in the query string and it's a valid integer
+if (isset($_GET["eventId"]) && ctype_digit($_GET["eventId"])) {
     // Database credentials
     include_once 'config.php';
     $servername = DB_HOST;
@@ -28,8 +28,8 @@ if (isset($_GET["eventId"])) {
     $categories = array();
     while ($row = $result->fetch_assoc()) {
         $categories[] = array(
-            "category_name" => $row["category_name"],
-            "category_cost" => $row["category_cost"]
+            "category_name" => htmlspecialchars($row["category_name"]), // Sanitize output
+            "category_cost" => htmlspecialchars($row["category_cost"]) // Sanitize output
         );
     }
 
@@ -41,8 +41,8 @@ if (isset($_GET["eventId"])) {
     header('Content-Type: application/json');
     echo json_encode($categories);
 } else {
-    // If the event ID is not set, return an error response
+    // If the event ID is not set or not a valid integer, return an error response
     http_response_code(400);
-    echo "Error: Event ID is not set.";
+    echo "Error: Event ID is not valid.";
 }
 ?>
