@@ -9,3 +9,5 @@ Please let me know if you want to contribute at dev@racetime.gr
 registration.php
 process_registration.php
 get_categories.php
+calendar.php
+show_events.php
