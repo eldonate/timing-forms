@@ -32,9 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("INSERT INTO registrations (event_id, category_name, first_name, last_name, dob, sex, team, phone_number, city, safety_number, t_shirt_size, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssssssss", $eventId, $categoryName, $firstName, $lastName, $dob, $sex, $team, $phoneNumber, $city, $safetyNumber, $tShirtSize, $email);
     if ($stmt->execute()) {
-        // Fetch event website from the database
+        // Prepare and execute SQL statement to fetch event website from the database
         $fetchStmt = $conn->prepare("SELECT event_website FROM events WHERE Id=?");
-		$fetchStmt->bind_param("i", $eventId);
+        $fetchStmt->bind_param("i", $eventId);
         $fetchStmt->execute();
         $fetchStmt->bind_result($eventWebsite);
         $fetchStmt->fetch();
