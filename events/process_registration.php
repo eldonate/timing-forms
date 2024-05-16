@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->close();
         
         // Redirect to event website after 3 seconds
-        echo "Registration successful! <br> Please wait...";
+        echo "<center><h1>Registration successful! <br> Please wait...</h1></center>";
         echo "<script>setTimeout(function() { window.location.href = '{$eventWebsite}'; }, 3000);</script>";
     } else {
         echo "Error: " . $stmt->error;
