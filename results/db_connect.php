@@ -1,9 +1,9 @@
 <?php
-include_once 'api_config.php';
-$servername = DB_HOST;
-$username = DB_USER;
-$password = DB_PASSWORD;
-$dbname = DB_NAME;
+
+$host = 'localhost';
+$dbname = 'dbname';
+$username = 'dbusername';
+$password = 'password';
 
 function connect_to_db() {
   global $host, $dbname, $username, $password;
