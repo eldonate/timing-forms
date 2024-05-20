@@ -5,7 +5,7 @@ require_once('db_connect.php');
 function get_data($id = null) {
   $conn = connect_to_db();
 
-  $sql = "SELECT * FROM results WHERE RaceID = ?";
+  $sql = "SELECT r.*, e.event_name FROM results r INNER JOIN events e ON r.RaceID = e.id WHERE r.RaceID = ?";
   $stmt = mysqli_prepare($conn, $sql);
 
   if (!$stmt) {
