@@ -1,9 +1,9 @@
 <?php
 
 $host = 'localhost';
-$dbname = 'dbname';
-$username = 'dbusername';
-$password = 'password';
+$dbname = 'testapi';
+$username = 'testapi';
+$password = '2iu25?Xn2'; // **Keep this confidential!**
 
 function connect_to_db() {
   global $host, $dbname, $username, $password;
