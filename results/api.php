@@ -1,11 +1,11 @@
 <?php
 
-require_once('db_connect.php'); 
+require_once('db_connect.php');
 
 function get_data($id = null) {
   $conn = connect_to_db();
 
-  $sql = "SELECT * FROM users WHERE id = ?";
+  $sql = "SELECT * FROM results WHERE RaceID = ?";
   $stmt = mysqli_prepare($conn, $sql);
 
   if (!$stmt) {
@@ -20,6 +20,10 @@ function get_data($id = null) {
 
   $data = [];
   while ($row = mysqli_fetch_assoc($result)) {
+    // Decode Unicode escape sequences
+    $row['FirstName'] = json_decode('"' . $row['FirstName'] . '"');
+    $row['LastName'] = json_decode('"' . $row['LastName'] . '"');
+    // Add decoded row to data array
     $data[] = $row;
   }
 
@@ -28,7 +32,6 @@ function get_data($id = null) {
 
   return $data;
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
@@ -42,16 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $data = get_data($id);
 
   if (empty($data)) {
-    // not found code (4004) code setup
     http_response_code(404);
-    echo json_encode(['error' => 'User not found']);
+    echo json_encode(['error' => 'race not found']);
   } else {
-    // success code setup (200)
     http_response_code(200);
+    // Set UTF-8 encoding for JSON output
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data);
   }
 } else {
-  //  unsupported method cide setup
   http_response_code(405);
   echo json_encode(['error' => 'Method not allowed']);
 }
+?>
