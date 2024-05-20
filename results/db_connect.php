@@ -3,7 +3,7 @@
 $host = 'localhost';
 $dbname = 'testapi';
 $username = 'testapi';
-$password = '2iu25?Xn2'; // **Keep this confidential!**
+$password = '2iu25?Xn2';
 
 function connect_to_db() {
   global $host, $dbname, $username, $password;
