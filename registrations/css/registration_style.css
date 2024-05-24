@@ -1,0 +1,70 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* Form styles (default for larger screens) */
+form {
+  width: 60%; /* Adjust this value as needed for larger screens */
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input and button styles (default for larger screens) */
+label {
+  font-weight: bold;
+  font-size: 15px; /* Set font size to 20px */
+  text-align: center; /* Center labels horizontally */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select,
+input[type="submit"] {
+  width: 100%; /* Full width for larger screens */
+  padding: 10px;
+  margin: 5px 0 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Media query for smaller screens */
+/* Media query for smaller screens */
+@media screen and (max-width: 400px) {
+  /* Adjust styles for smaller screens here */
+  label {
+    font-size: 15px; /* Set font size to 15px for mobile */
+  }
+
+  /* Form styles for mobile */
+  form {
+    width: 100%; /* Full width on mobile */
+  }
+
+  /* Input and button styles for mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select {
+    width: calc(100% - 20px); /* Adjust padding value as needed */
+  }
+
+  input[type="submit"] {
+    width: 100%; /* Full width on mobile */
+  }
+}
