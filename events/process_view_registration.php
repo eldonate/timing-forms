@@ -51,8 +51,23 @@
                     echo "<td>" . $row["t_shirt_size"] . "</td>";
                     echo "<td>" . $row["email"] . "</td>";
                     echo "<td>" . $row["registration_date"] . "</td>";
-                    echo "<td>" . $row["category_name"] . "</td>";
-                    echo "<td>" . $row["category_cost"] . "</td>";
+
+                    // Retrieve category_cost from categories table based on category_name
+                    $categoryName = $row["category_name"];
+                    $categoryCostQuery = $conn->prepare("SELECT category_cost FROM categories WHERE category_name = ?");
+                    $categoryCostQuery->bind_param("s", $categoryName);
+                    $categoryCostQuery->execute();
+                    $categoryCostResult = $categoryCostQuery->get_result();
+
+                    if ($categoryCostResult->num_rows > 0) {
+                        $categoryCostRow = $categoryCostResult->fetch_assoc();
+                        $categoryCost = $categoryCostRow["category_cost"];
+                        echo "<td>" . $categoryName . "</td>";
+                        echo "<td>" . $categoryCost . "</td>";
+                    } else {
+                        // If no category cost found, display a message or handle it accordingly
+                        echo "<td colspan='2'>Category cost not found</td>";
+                    }
                     echo "</tr>";
                 }
                 echo "</table>";
