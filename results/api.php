@@ -2,59 +2,91 @@
 
 require_once('db_connect.php');
 
-function get_data($id = null) {
-  $conn = connect_to_db();
+function get_all_events_with_results() {
+    $conn = connect_to_db();
 
-  $sql = "SELECT r.*, e.event_name FROM results r INNER JOIN events e ON r.RaceID = e.id WHERE r.RaceID = ?";
-  $stmt = mysqli_prepare($conn, $sql);
+    $sql = "SELECT * FROM events";
+    $result = mysqli_query($conn, $sql);
 
-  if (!$stmt) {
-    echo "Error: Could not prepare statement. " . mysqli_error($conn);
-    exit;
-  }
+    if (!$result) {
+        echo "Error: " . mysqli_error($conn);
+        exit;
+    }
 
-  mysqli_stmt_bind_param($stmt, 'i', $id);
-  mysqli_stmt_execute($stmt);
+    $events = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $event_id = $row['id'];
+        $categories = get_categories_for_event($conn, $event_id);
+        $row['categories'] = [];
 
-  $result = mysqli_stmt_get_result($stmt);
+        foreach ($categories as $category) {
+            $results = get_results_for_event_and_category($conn, $event_id, $category);
+            $row['categories'][$category] = $results;
+        }
 
-  $data = [];
-  while ($row = mysqli_fetch_assoc($result)) {
-    // Decode Unicode escape sequences
-    $row['FirstName'] = json_decode('"' . $row['FirstName'] . '"');
-    $row['LastName'] = json_decode('"' . $row['LastName'] . '"');
-    // Add decoded row to data array
-    $data[] = $row;
-  }
+        $events[] = $row;
+    }
 
-  mysqli_stmt_close($stmt);
-  mysqli_close($conn);
+    mysqli_close($conn);
 
-  return $data;
+    return $events;
+}
+
+function get_categories_for_event($conn, $event_id) {
+    $sql = "SELECT DISTINCT RaceCategory FROM results WHERE RaceID = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        echo "Error: " . mysqli_error($conn);
+        exit;
+    }
+
+    mysqli_stmt_bind_param($stmt, 'i', $event_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $categories = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $categories[] = $row['RaceCategory'];
+    }
+
+    mysqli_stmt_close($stmt);
+
+    return $categories;
+}
+
+function get_results_for_event_and_category($conn, $event_id, $category) {
+    $sql = "SELECT * FROM results WHERE RaceID = ? AND RaceCategory = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        echo "Error: " . mysqli_error($conn);
+        exit;
+    }
+
+    mysqli_stmt_bind_param($stmt, 'is', $event_id, $category);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $results = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $results[] = $row;
+    }
+
+    mysqli_stmt_close($stmt);
+
+    return $results;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-  $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+    $all_events = get_all_events_with_results();
 
-  if ($id === null) {
-    http_response_code(400);
-    echo json_encode(['error' => 'ID parameter is required']);
-    exit;
-  }
-
-  $data = get_data($id);
-
-  if (empty($data)) {
-    http_response_code(404);
-    echo json_encode(['error' => 'race not found']);
-  } else {
     http_response_code(200);
     // Set UTF-8 encoding for JSON output
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($data);
-  }
+    echo json_encode(['events' => $all_events]);
 } else {
-  http_response_code(405);
-  echo json_encode(['error' => 'Method not allowed']);
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed']);
 }
 ?>
