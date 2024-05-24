@@ -31,6 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Connection failed: " . $conn->connect_error);
     }
 
+    // Set the character set to UTF-8
+    $conn->set_charset("utf8");
+
     // Prepare and execute SQL statement to insert registration data into the database
     $stmt = $conn->prepare("INSERT INTO registrations (event_id, category_name, first_name, last_name, dob, sex, team, phone_number, city, safety_number, t_shirt_size, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssssssss", $eventId, $categoryName, $firstName, $lastName, $dob, $sex, $team, $phoneNumber, $city, $safetyNumber, $tShirtSize, $email);
@@ -60,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Password = SMTP_PASSWORD; // Use SMTP password from config.php
             $mail->SMTPSecure = 'tls';
             $mail->Port = SMTP_PORT; // Use SMTP port from config.php
+
+            // Set email encoding to UTF-8
+            $mail->CharSet = 'UTF-8';
 
             //Recipients
             $mail->setFrom('info@racetime.gr', 'Race Time');
