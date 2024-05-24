@@ -23,8 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tShirtSize = $_POST["tShirtSize"];
     $email = $_POST["email"];
 
-    // Additional processing can be done here, such as validation and sanitization of input data
-
     // Connect to the database using credentials from config.php
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if ($conn->connect_error) {
@@ -70,11 +68,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //Recipients
             $mail->setFrom('info@racetime.gr', 'Race Time');
             $mail->addAddress($email); // Add a recipient
+			$htmlContent = file_get_contents('sample_race.txt');
+            
+            // Replace placeholders with actual values in the email content
+            $htmlContent = str_replace('{eventName}', $eventName, $htmlContent);
+            $htmlContent = str_replace('{firstName}', $firstName, $htmlContent);
+            $htmlContent = str_replace('{lastName}', $lastName, $htmlContent);
+            $htmlContent = str_replace('{dob}', $dob, $htmlContent);
+            $htmlContent = str_replace('{sex}', $sex, $htmlContent);
+            $htmlContent = str_replace('{team}', $team, $htmlContent);
+            $htmlContent = str_replace('{phoneNumber}', $phoneNumber, $htmlContent);
+            $htmlContent = str_replace('{city}', $city, $htmlContent);
+            $htmlContent = str_replace('{safetyNumber}', $safetyNumber, $htmlContent);
+            $htmlContent = str_replace('{tShirtSize}', $tShirtSize, $htmlContent);
+            $htmlContent = str_replace('{email}', $email, $htmlContent);
 
             //Content
             $mail->isHTML(true); // Set email format to HTML
             $mail->Subject = 'Επιβεβαίωση Εγγραφής';
-            $mail->Body    = "Ευχαριστούμε για την εγγραφή σας στον '$eventName'!";
+            $mail->Body = $htmlContent;
 
             $mail->send();
             echo "<center><h1>Registration successful! <br> Please wait...</h1></center>";
