@@ -27,7 +27,7 @@ if ($conn->connect_error) {
 }
 
 // Retrieve events from the database using prepared statement
-$sql = "SELECT id, event_name FROM events";
+$sql = "SELECT id, event_name FROM events where enabled=true";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -92,31 +92,33 @@ $conn->close();
         <input type="submit" value="Register">
     </form>
 
-    <script>
-        function populateCategories() {
-            var eventId = document.getElementById("eventId").value;
-            var categoryNameSelect = document.getElementById("categoryName");
+<script>
+    function populateCategories() {
+        var eventId = document.getElementById("eventId").value;
+        var categoryNameSelect = document.getElementById("categoryName");
 
-            // Enable category dropdown menu
-            categoryNameSelect.disabled = false;
-            categoryNameSelect.innerHTML = "<option value=''>Loading...</option>";
+        // Enable category dropdown menu
+        categoryNameSelect.disabled = false;
+        categoryNameSelect.innerHTML = "<option value=''>Loading...</option>";
 
-            // Fetch categories for the selected event from the database
-            fetch("get_categories.php?eventId=" + eventId)
-                .then(response => response.json())
-                .then(categories => {
-                    // Populate category dropdown menu with retrieved categories
-                    categoryNameSelect.innerHTML = "<option value=''>Select Category</option>";
-                    categories.forEach(category => {
-                        categoryNameSelect.innerHTML += "<option value='" + category.category_name + "'>" + category.category_name + " - " + category.category_cost + "</option>";
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
+        // Fetch categories for the selected event from the database
+        fetch("get_categories.php?eventId=" + eventId)
+            .then(response => response.json())
+            .then(categories => {
+                // Populate category dropdown menu with retrieved categories
+                categoryNameSelect.innerHTML = "<option value=''>Select Category</option>";
+                categories.forEach(category => {
+                    var optionText = category.category_name + " - " + category.category_cost + "€";
+                    categoryNameSelect.innerHTML += "<option value='" + category.category_name + "'>" + optionText + "</option>";
                 });
-        }
-    </script>
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
+            });
+    }
+</script>
+
 
 
 </body>
