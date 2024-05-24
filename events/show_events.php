@@ -81,7 +81,7 @@
                             echo "<p><strong>Categories:</strong></p>";
                             echo "<ul>";
                             do {
-                                echo "<li><strong>Name:</strong> " . htmlspecialchars($row["category_name"]) . ", <strong>Cost:</strong> $" . htmlspecialchars($row["category_cost"]) . "</li>";
+                                echo "<li><strong>Name:</strong> " . htmlspecialchars($row["category_name"]) . ", <strong>Cost:</strong> €" . htmlspecialchars($row["category_cost"]) . "</li>";
                             } while ($row = $result->fetch_assoc() and $row["id"] == $selectedEventId);
                             echo "</ul>";
                         }
