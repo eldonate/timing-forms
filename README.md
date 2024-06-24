@@ -16,3 +16,4 @@ Notes
 -Setting "enabled" field on database, from 1 to 0, will hide the race from the registration form
 -After completing registration, the participant will be redirected to the website page as it has been defined while adding an event.
 -Also, after completing registration, there should be a txt file named "ID_race_registration_info.txt" which is the comfirmation email that the user will receive. ID is the race ID as it is on the database.
+-There is a show_registrations.php_race_specific where we can set the race ID in order to show the participants. We can rename the file and provide this link to the organizers.
