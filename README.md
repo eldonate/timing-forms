@@ -10,3 +10,9 @@ Also the file has to be on the same location with the process_registration.php
 
 I am not a developer and I am doing this to assist our local running community.
 Please let me know if you want to contribute at dev@racetime.gr
+
+Notes
+
+-Setting "enabled" field on database, from 1 to 0, will hide the race from the registration form
+-After completing registration, the participant will be redirected to the website page as it has been defined while adding an event.
+-Also, after completing registration, there should be a txt file named "ID_race_registration_info.txt" which is the comfirmation email that the user will receive. ID is the race ID as it is on the database.
