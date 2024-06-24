@@ -68,13 +68,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //Recipients
             $mail->setFrom('info@racetime.gr', 'Race Time');
             $mail->addAddress($email); // Add a recipient
-			$mail->addAddress("registrations@racetime.gr");
-		//construct the file
-			$filename = $eventId . "_race_registration_info.txt";
-			$htmlContent = file_get_contents($filename);
+            $mail->addAddress("registrations@racetime.gr");
+        
+            // Construct the file
+            $filename = $eventId . "_race_registration_info.txt";
+            $htmlContent = file_get_contents($filename);
             
             // Replace placeholders with actual values in the email content
             $htmlContent = str_replace('{eventName}', $eventName, $htmlContent);
+            $htmlContent = str_replace('{categoryName}', $categoryName, $htmlContent);
             $htmlContent = str_replace('{firstName}', $firstName, $htmlContent);
             $htmlContent = str_replace('{lastName}', $lastName, $htmlContent);
             $htmlContent = str_replace('{dob}', $dob, $htmlContent);
