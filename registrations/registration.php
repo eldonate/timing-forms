@@ -3,7 +3,7 @@
 <head>
     <title>Race Time - Registration Form</title>
     <link rel="stylesheet" type="text/css" href="css/registration_style.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <h2>Registration Form</h2>
@@ -89,7 +89,7 @@ $conn->close();
         <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
         <label for="acceptTerms">Αποδέχομαι τους <a href="#">όρους χρήσης</a></label><br><br>
 
-        <input type="submit" value="Register">
+        <input type="submit" value="Register" id="submitButton">
     </form>
 
 <script>
@@ -117,9 +117,12 @@ $conn->close();
                 categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
             });
     }
+
+    // Disable submit button on form submit to prevent multiple submissions
+    document.getElementById('registrationForm').addEventListener('submit', function() {
+        document.getElementById('submitButton').disabled = true;
+    });
 </script>
-
-
 
 </body>
 </html>
