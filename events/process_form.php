@@ -30,12 +30,13 @@ $eventDate = $_POST['eventDate']; // Assuming date format is validated on the cl
 $eventType = sanitizeInput($_POST['eventType']);
 $description = sanitizeInput($_POST['description']);
 $eventWebsite = filter_var($_POST['eventWebsite'], FILTER_SANITIZE_URL);
+$welcomeLetter = $_POST['welcomeLetter']; // Assuming welcome letter will be properly handled to allow HTML
 $categories = $_POST['categoryName']; // Assuming category names are validated on the client-side
 $costs = $_POST['categoryCost']; // Assuming costs are validated on the client-side
 
 // Prepare and bind SQL statement for event insertion
-$stmt = $conn->prepare("INSERT INTO events (event_name, event_location, event_date, event_type, description, event_website) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssss", $eventName, $eventLocation, $eventDate, $eventType, $description, $eventWebsite);
+$stmt = $conn->prepare("INSERT INTO events (event_name, event_location, event_date, event_type, description, event_website, welcome_letter) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sssssss", $eventName, $eventLocation, $eventDate, $eventType, $description, $eventWebsite, $welcomeLetter);
 
 // Execute event insertion
 $stmt->execute();
