@@ -16,7 +16,7 @@ if (isset($_GET["eventId"]) && ctype_digit($_GET["eventId"])) {
 
     // Prepare SQL statement to retrieve categories for the selected event
     $eventId = $_GET["eventId"];
-    $sql = "SELECT category_name, category_cost, clothes FROM categories WHERE event_id = ?";
+    $sql = "SELECT category_name, category_cost FROM categories WHERE event_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $eventId);
 
@@ -29,8 +29,7 @@ if (isset($_GET["eventId"]) && ctype_digit($_GET["eventId"])) {
     while ($row = $result->fetch_assoc()) {
         $categories[] = array(
             "category_name" => htmlspecialchars($row["category_name"]), // Sanitize output
-            "category_cost" => htmlspecialchars($row["category_cost"]), // Sanitize output
-            "clothes" => htmlspecialchars($row["clothes"]) // Include clothes value
+            "category_cost" => htmlspecialchars($row["category_cost"]) // Sanitize output
         );
     }
 
