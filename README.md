@@ -19,5 +19,4 @@ Notes
 -There is a show_registrations.php_race_specific where we can set the race ID in order to show the participants. We can rename the file and provide this link to the organizers.</br>
 </br>
 For the results, you have to upload a txt file and run the import tool (results/import_results.php) in order to add the results to the race.</br>
-Then the results_process.php has to be run (if not running with cron jobs) in order to generate the rest of the data and update the android app.</br>
-results.php is being updated from the api also
+Then the results_process.php has to be run (if not running with cron jobs) in order to generate the rest of the data and update the android app.
