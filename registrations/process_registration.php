@@ -36,11 +36,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("INSERT INTO registrations (event_id, category_name, first_name, last_name, dob, sex, team, phone_number, city, safety_number, t_shirt_size, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssssssss", $eventId, $categoryName, $firstName, $lastName, $dob, $sex, $team, $phoneNumber, $city, $safetyNumber, $tShirtSize, $email);
     if ($stmt->execute()) {
-        // Prepare and execute SQL statement to fetch event name and website from the database
-        $fetchStmt = $conn->prepare("SELECT event_name, event_website FROM events WHERE Id=?");
+        // Prepare and execute SQL statement to fetch event name, website, and welcome letter from the database
+        $fetchStmt = $conn->prepare("SELECT event_name, event_website, welcome_letter FROM events WHERE Id=?");
         $fetchStmt->bind_param("i", $eventId);
         $fetchStmt->execute();
-        $fetchStmt->bind_result($eventName, $eventWebsite);
+        $fetchStmt->bind_result($eventName, $eventWebsite, $welcomeLetter);
         $fetchStmt->fetch();
         $fetchStmt->close();
         
@@ -70,23 +70,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->addAddress($email); // Add a recipient
             $mail->addAddress("registrations@racetime.gr");
         
-            // Construct the file
-            $filename = $eventId . "_race_registration_info.txt";
-            $htmlContent = file_get_contents($filename);
-            
-            // Replace placeholders with actual values in the email content
-            $htmlContent = str_replace('{eventName}', $eventName, $htmlContent);
-            $htmlContent = str_replace('{categoryName}', $categoryName, $htmlContent);
-            $htmlContent = str_replace('{firstName}', $firstName, $htmlContent);
-            $htmlContent = str_replace('{lastName}', $lastName, $htmlContent);
-            $htmlContent = str_replace('{dob}', $dob, $htmlContent);
-            $htmlContent = str_replace('{sex}', $sex, $htmlContent);
-            $htmlContent = str_replace('{team}', $team, $htmlContent);
-            $htmlContent = str_replace('{phoneNumber}', $phoneNumber, $htmlContent);
-            $htmlContent = str_replace('{city}', $city, $htmlContent);
-            $htmlContent = str_replace('{safetyNumber}', $safetyNumber, $htmlContent);
-            $htmlContent = str_replace('{tShirtSize}', $tShirtSize, $htmlContent);
-            $htmlContent = str_replace('{email}', $email, $htmlContent);
+            // Construct the HTML email content
+            $htmlContent = '
+            <!DOCTYPE html>
+            <html lang="el">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Επιβεβαίωση Εγγραφής</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f9f9f9;
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    h2 {
+                        color: #333;
+                    }
+                    p {
+                        margin-bottom: 20px;
+                    }
+                    .event-name {
+                        font-weight: bold;
+                        color: #008080;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h2>Επιβεβαίωση Εγγραφής</h2>
+                    <p>Ευχαριστούμε για την εγγραφή σας στον αγώνα <span class="event-name">' . htmlspecialchars($eventName, ENT_QUOTES) . '</span>!</p>
+                    <p>Παρακάτω είναι τα στοιχεία εγγραφής σας:</p>
+                    <ul>
+                        <li>Όνομα: ' . htmlspecialchars($firstName, ENT_QUOTES) . '</li>
+                        <li>Επώνυμο: ' . htmlspecialchars($lastName, ENT_QUOTES) . '</li>
+                        <li>Ημερομηνία Γέννησης: ' . htmlspecialchars($dob, ENT_QUOTES) . '</li>
+                        <li>Φύλο: ' . htmlspecialchars($sex, ENT_QUOTES) . '</li>
+                        <li>Ομάδα: ' . htmlspecialchars($team, ENT_QUOTES) . '</li>
+                        <li>Τηλέφωνο: ' . htmlspecialchars($phoneNumber, ENT_QUOTES) . '</li>
+                        <li>Πόλη: ' . htmlspecialchars($city, ENT_QUOTES) . '</li>
+                        <li>Αριθμός Ασφάλειας: ' . htmlspecialchars($safetyNumber, ENT_QUOTES) . '</li>
+                        <li>Μέγεθος Μπλούζας: ' . htmlspecialchars($tShirtSize, ENT_QUOTES) . '</li>
+                        <li>Email: ' . htmlspecialchars($email, ENT_QUOTES) . '</li>
+                    </ul>
+                    <div>' . $welcomeLetter . '</div>
+                </div>
+            </body>
+            </html>';
 
             //Content
             $mail->isHTML(true); // Set email format to HTML
