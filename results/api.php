@@ -55,6 +55,29 @@ function get_categories_for_event($conn, $event_id) {
     return $categories;
 }
 
+function get_splits_for_rfid($conn, $rfid, $event_id) {
+    $sql = "SELECT * FROM splits WHERE rfid = ? AND race_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        echo "Error: " . mysqli_error($conn);
+        exit;
+    }
+
+    mysqli_stmt_bind_param($stmt, 'si', $rfid, $event_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $splits = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $splits[] = $row;
+    }
+
+    mysqli_stmt_close($stmt);
+
+    return $splits;
+}
+
 function get_results_for_event_and_category($conn, $event_id, $category) {
     $sql = "SELECT * FROM results WHERE RaceID = ? AND RaceCategory = ?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -70,6 +93,9 @@ function get_results_for_event_and_category($conn, $event_id, $category) {
 
     $results = [];
     while ($row = mysqli_fetch_assoc($result)) {
+        // Fetch splits for this runner
+        $splits = get_splits_for_rfid($conn, $row['RFID'], $event_id);
+        $row['splits'] = $splits;
         $results[] = $row;
     }
 
