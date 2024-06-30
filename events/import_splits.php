@@ -37,17 +37,33 @@ function insertDataFromCSV($filename, $conn, $raceID, $splitNumber, $position) {
 
         // Read data from CSV and insert into database
         while (($data = fgetcsv($handle)) !== FALSE) {
+            // Extract data from CSV row
+            $participantID = $data[0];
+            $firstName = $data[1];
+            $lastName = $data[2];
+            $rfid = $data[3];
+            $birthdate = $data[4]; // You might need to use this later
+            $age = $data[5]; // You might need to use this later
+            $finishTime = $data[6]; // Assuming Finish Time is the 7th column
+
+            // Extract time portion (assuming format HH:MM:SS[.sss])
+            $timeParts = explode('.', $finishTime);
+            $splitTime = $timeParts[0]; // Take only HH:MM:SS part
+
+            // (Optional) Validate time format (adjust validation as needed)
+            if (!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/', $splitTime)) {
+                echo "Error: Invalid time format for participant " . $participantID . "<br>";
+                continue; // Skip this row if time format is invalid after extraction
+            }
+
             // Prepare SQL statement to insert data
             $sql = "INSERT INTO splits (race_id, split_number, position, rfid, split_time)
                     VALUES (?, ?, ?, ?, ?)";
 
             // Prepare and bind parameters
             if ($stmt = $conn->prepare($sql)) {
-                $stmt->bind_param("iidsd", $raceID, $splitNumber, $position, $rfid, $splitTime);
-
-                // Set parameters
-                list($participantID, $firstName, $lastName, $rfid, $birthdate, $age, $finishTime, $gender, $raceCategory) = $data;
-                $splitTime = $finishTime; // Assuming Finish Time is used for Split Time
+                // Bind parameters
+                $stmt->bind_param("iiiss", $raceID, $splitNumber, $position, $rfid, $splitTime);
 
                 // Execute SQL statement
                 if (!$stmt->execute()) {
