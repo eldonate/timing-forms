@@ -4,11 +4,6 @@
     <title>Race Time - Registration Form</title>
     <link rel="stylesheet" type="text/css" href="css/registration_style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        #tShirtSizeLabel, #tShirtSize {
-            display: none; /* Hide initially */
-        }
-    </style>
 </head>
 <body>
     <h2>Registration Form</h2>
@@ -17,35 +12,36 @@
         <select id="eventId" name="eventId" required onchange="populateCategories()">
             <option value="">Επιλέξτε αγώνα</option>
             <?php
-                include_once 'config.php';
-                $servername = DB_HOST;
-                $username = DB_USER;
-                $password = DB_PASSWORD;
-                $dbname = DB_NAME;
+include_once 'config.php';
+$servername = DB_HOST;
+$username = DB_USER;
+$password = DB_PASSWORD;
+$dbname = DB_NAME;
 
-                // Create connection
-                $conn = new mysqli($servername, $username, $password, $dbname);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-                // Retrieve events from the database using prepared statement
-                $sql = "SELECT id, event_name FROM events WHERE enabled=true";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-                $result = $stmt->get_result();
+// Retrieve events from the database using prepared statement
+$sql = "SELECT id, event_name FROM events where enabled=true";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
 
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["event_name"]) . "</option>";
-                    }
-                }
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["event_name"]) . "</option>";
+    }
+}
 
-                $stmt->close();
-                $conn->close();
-            ?>
+$stmt->close();
+$conn->close();
+?>
+
         </select><br><br>
 
         <label for="categoryName">Κατηγορία:</label><br>
@@ -80,7 +76,7 @@
         <label for="safetyNumber">Τηλ. Έκτακτης Ανάγκης:</label><br>
         <input type="text" id="safetyNumber" name="safetyNumber"><br><br>
 
-        <label for="tShirtSize" id="tShirtSizeLabel">Μέγεθος Μπλούζας:</label><br>
+        <label for="tShirtSize">Μέγεθος Μπλούζας:</label><br>
         <select id="tShirtSize" name="tShirtSize" required>
             <option value="S">S</option>
             <option value="M">M</option>
@@ -96,52 +92,37 @@
         <input type="submit" value="Register" id="submitButton">
     </form>
 
-    <script>
-        function populateCategories() {
-            var eventId = document.getElementById("eventId").value;
-            var categoryNameSelect = document.getElementById("categoryName");
+<script>
+    function populateCategories() {
+        var eventId = document.getElementById("eventId").value;
+        var categoryNameSelect = document.getElementById("categoryName");
 
-            // Enable category dropdown menu
-            categoryNameSelect.disabled = false;
-            categoryNameSelect.innerHTML = "<option value=''>Loading...</option>";
+        // Enable category dropdown menu
+        categoryNameSelect.disabled = false;
+        categoryNameSelect.innerHTML = "<option value=''>Loading...</option>";
 
-            // Fetch categories for the selected event from the database
-            fetch("get_categories.php?eventId=" + eventId)
-                .then(response => response.json())
-                .then(categories => {
-                    // Populate category dropdown menu with retrieved categories
-                    categoryNameSelect.innerHTML = "<option value=''>Select Category</option>";
-                    let clothesEnabled = false;
-                    categories.forEach(category => {
-                        var optionText = category.category_name + " - " + category.category_cost + "€";
-                        categoryNameSelect.innerHTML += "<option value='" + category.category_name + "'>" + optionText + "</option>";
-                        if (category.clothes == 1) {
-                            clothesEnabled = true;
-                        }
-                    });
-
-                    // Show or hide the T-shirt size dropdown based on the clothes value
-                    var tShirtSizeLabel = document.getElementById("tShirtSizeLabel");
-                    var tShirtSizeSelect = document.getElementById("tShirtSize");
-                    if (clothesEnabled) {
-                        tShirtSizeLabel.style.display = "block";
-                        tShirtSizeSelect.style.display = "block";
-                    } else {
-                        tShirtSizeLabel.style.display = "none";
-                        tShirtSizeSelect.style.display = "none";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
+        // Fetch categories for the selected event from the database
+        fetch("get_categories.php?eventId=" + eventId)
+            .then(response => response.json())
+            .then(categories => {
+                // Populate category dropdown menu with retrieved categories
+                categoryNameSelect.innerHTML = "<option value=''>Select Category</option>";
+                categories.forEach(category => {
+                    var optionText = category.category_name + " - " + category.category_cost + "€";
+                    categoryNameSelect.innerHTML += "<option value='" + category.category_name + "'>" + optionText + "</option>";
                 });
-        }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
+            });
+    }
 
-        // Disable submit button on form submit to prevent multiple submissions
-        document.getElementById('registrationForm').addEventListener('submit', function() {
-            document.getElementById('submitButton').disabled = true;
-        });
-    </script>
+    // Disable submit button on form submit to prevent multiple submissions
+    document.getElementById('registrationForm').addEventListener('submit', function() {
+        document.getElementById('submitButton').disabled = true;
+    });
+</script>
 
 </body>
 </html>
