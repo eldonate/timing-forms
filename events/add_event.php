@@ -29,6 +29,9 @@
         <label for="eventWebsite">Event Website:</label><br>
         <input type="url" id="eventWebsite" name="eventWebsite"><br>
 
+        <label for="welcomeLetter">Welcome Letter (HTML Supported):</label><br>
+        <textarea id="welcomeLetter" name="welcomeLetter" rows="10" cols="50"></textarea><br>
+
         <div id="categoryFields">
             <!-- JavaScript will add category fields dynamically -->
         </div>
