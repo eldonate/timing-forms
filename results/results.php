@@ -23,6 +23,14 @@
             padding: 8px;
             text-align: left;
         }
+        .toggle-button {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -124,7 +132,7 @@
                     const tbody = document.createElement('tbody');
 
                     // Create table headers
-                    const headers = ['General Position', 'Participant', 'Finish Time', 'Gender', 'Age', 'Gender Position', 'Speed', 'Pace'];
+                    const headers = ['General Position', 'Participant', 'Finish Time', 'Gender', 'Age', 'Gender Position', 'Speed', 'Pace', 'Splits'];
                     const tr = document.createElement('tr');
                     headers.forEach(header => {
                         const th = document.createElement('th');
@@ -138,7 +146,7 @@
                     results.forEach(result => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-							<td>${result.general_position}</td>
+                            <td>${result.general_position}</td>
                             <td>${result.FirstName} ${result.LastName}</td>
                             <td>${result.FinishTime}</td>
                             <td>${result.Gender}</td>
@@ -146,16 +154,42 @@
                             <td>${result.gender_position}</td>
                             <td>${result.speed}</td>
                             <td>${result.pace}</td>
+                            <td><button class="toggle-button">Show Splits</button>
+                                <div class="hidden splits">${formatSplits(result.splits)}</div></td>
                         `;
                         tbody.appendChild(tr);
                     });
                     table.appendChild(tbody);
                     resultsDiv.appendChild(table);
+
+                    // Add event listeners for toggle buttons
+                    const toggleButtons = document.querySelectorAll('.toggle-button');
+                    toggleButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const splitsDiv = this.nextElementSibling;
+                            splitsDiv.classList.toggle('hidden');
+                            if (splitsDiv.classList.contains('hidden')) {
+                                this.textContent = 'Show Splits';
+                            } else {
+                                this.textContent = 'Hide Splits';
+                            }
+                        });
+                    });
                 } else {
                     resultsDiv.innerHTML = '<p>No results available for this category.</p>';
                 }
             }
         });
+
+        // Function to format splits for display
+        function formatSplits(splits) {
+            let html = '<ul>';
+            splits.forEach(split => {
+                html += `<li>Split ${split.split_number}: ${split.split_time}</li>`;
+            });
+            html += '</ul>';
+            return html;
+        }
     </script>
 </body>
 </html>
