@@ -5,66 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Race Results</title>
     <style>
+        /* General styles */
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
-        .event, .category, .results {
-            margin-bottom: 20px;
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
         }
+
+        /* Form styles (default for larger screens) */
+        form {
+            width: 60%; /* Adjust this value as needed for larger screens */
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input and button styles (default for larger screens) */
+        label {
+            font-weight: bold;
+            font-size: 15px; /* Set font size to 20px */
+            text-align: center; /* Center labels horizontally */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        input[type="submit"] {
+            width: 100%; /* Full width for larger screens */
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Media query for smaller screens */
+        @media screen and (max-width: 400px) {
+            /* Adjust styles for smaller screens here */
+            label {
+                font-size: 15px; /* Set font size to 15px for mobile */
+            }
+
+            /* Form styles for mobile */
+            form {
+                width: 100%; /* Full width on mobile */
+            }
+
+            /* Input and button styles for mobile */
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            select {
+                width: calc(100% - 20px); /* Adjust padding value as needed */
+            }
+
+            input[type="submit"] {
+                width: 100%; /* Full width on mobile */
+            }
+        }
+
+        /* Table styles */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
+
         th, td {
+            border: 1px solid black;
             padding: 8px;
             text-align: left;
         }
-        .toggle-button {
-            cursor: pointer;
-            color: blue;
-            text-decoration: underline;
-        }
+
         .hidden {
             display: none;
+        }
+
+        .toggle-button {
+            cursor: pointer;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            border-radius: 5px;
+        }
+
+        .toggle-button:hover {
+            background-color: #3e8e41; /* Dark green */
         }
     </style>
 </head>
 <body>
     <h1>Race Results</h1>
-    <?php
-    // The URL to your API endpoint
-    $api_url = 'https://racetime.gr/results/api.php';  // Replace with your actual API URL
-
-    // Fetch data from the API
-    $response = file_get_contents($api_url);
-    if ($response === FALSE) {
-        echo '<p>Error fetching data from the API.</p>';
-        exit;
-    }
-
-    // Decode the JSON response
-    $data = json_decode($response, true);
-    if ($data === NULL) {
-        echo '<p>Error decoding JSON response.</p>';
-        exit;
-    }
-
-    // Check if 'events' key exists in the response
-    if (!isset($data['events'])) {
-        echo '<p>No events data found in the API response.</p>';
-        exit;
-    }
-
-    // Store the events data in a JavaScript variable
-    echo '<script>';
-    echo 'const eventsData = ' . json_encode($data['events']) . ';';
-    echo '</script>';
-    ?>
-
     <div>
         <label for="eventSelect">Select Event:</label>
         <select id="eventSelect">
@@ -82,20 +131,35 @@
     <div id="results"></div>
 
     <script>
-        // Populate event selection dropdown
-        const eventSelect = document.getElementById('eventSelect');
+        let eventsData = [];
+
+        // Fetch data from the API
+        fetch('https://racetime.gr/results/api.php')
+            .then(response => response.json())
+            .then(data => {
+                eventsData = data.events;
+                populateEventSelect();
+            })
+            .catch(error => {
+                console.error('Error fetching data from API:', error);
+            });
+
+        function populateEventSelect() {
+            const eventSelect = document.getElementById('eventSelect');
+            eventSelect.innerHTML = '<option value="">--Select Event--</option>';
+
+            eventsData.forEach(event => {
+                const option = document.createElement('option');
+                option.value = event.id;
+                option.textContent = event.event_name;
+                eventSelect.appendChild(option);
+            });
+        }
+
         const categorySelect = document.getElementById('categorySelect');
         const resultsDiv = document.getElementById('results');
 
-        eventsData.forEach(event => {
-            const option = document.createElement('option');
-            option.value = event.id;
-            option.textContent = event.event_name;
-            eventSelect.appendChild(option);
-        });
-
         eventSelect.addEventListener('change', function() {
-            // Clear previous category options and results
             categorySelect.innerHTML = '<option value="">--Select Category--</option>';
             resultsDiv.innerHTML = '';
             categorySelect.disabled = true;
@@ -116,7 +180,6 @@
         });
 
         categorySelect.addEventListener('change', function() {
-            // Clear previous results
             resultsDiv.innerHTML = '';
 
             const selectedEventId = eventSelect.value;
@@ -131,7 +194,6 @@
                     const thead = document.createElement('thead');
                     const tbody = document.createElement('tbody');
 
-                    // Create table headers
                     const headers = ['General Position', 'Participant', 'Finish Time', 'Gender', 'Age', 'Gender Position', 'Speed', 'Pace', 'Splits'];
                     const tr = document.createElement('tr');
                     headers.forEach(header => {
@@ -142,7 +204,6 @@
                     thead.appendChild(tr);
                     table.appendChild(thead);
 
-                    // Create table rows
                     results.forEach(result => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -162,7 +223,6 @@
                     table.appendChild(tbody);
                     resultsDiv.appendChild(table);
 
-                    // Add event listeners for toggle buttons
                     const toggleButtons = document.querySelectorAll('.toggle-button');
                     toggleButtons.forEach(button => {
                         button.addEventListener('click', function() {
@@ -181,11 +241,11 @@
             }
         });
 
-        // Function to format splits for display
         function formatSplits(splits) {
             let html = '<ul>';
             splits.forEach(split => {
-                html += `<li>Split ${split.split_number}: ${split.split_time}</li>`;
+                const splitPosition = split.position / 1000;
+                html += `<li>Split ${splitPosition.toFixed(1)}k: ${split.split_time}</li>`;
             });
             html += '</ul>';
             return html;
