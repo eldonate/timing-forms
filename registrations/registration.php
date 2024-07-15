@@ -24,14 +24,19 @@
         }
 
         // Retrieve events from the database using prepared statement
-        $sql = "SELECT id, event_name FROM events where enabled=true";
+        $sql = "SELECT id, event_name, event_logo FROM events WHERE enabled=true";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                echo "<div class='race-box' data-event-id='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["event_name"]) . "</div>";
+                echo "<div class='race-box' data-event-id='" . htmlspecialchars($row["id"]) . "'>";
+                if ($row["event_logo"]) {
+                    $logoPath = "../event_logos/" . htmlspecialchars($row["event_logo"]);
+                    echo "<img src='" . $logoPath . "' alt='Event Logo' class='race-logo'><br>"; // Added <br> here
+                }
+                echo "<span class='race-name'>" . htmlspecialchars($row["event_name"]) . "</span></div>"; // Wrapped race name in span for styling
             }
         }
 
