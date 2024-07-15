@@ -69,6 +69,10 @@ input[type="submit"] {
 }
 
 /* Styles for race boxes */
+#raceContainer {
+    text-align: center; /* Center align race boxes */
+}
+
 .race-box {
     display: inline-block;
     width: 200px;
@@ -82,6 +86,16 @@ input[type="submit"] {
 
 .race-box:hover {
     background-color: #f0f0f0;
+}
+
+/* Max height for event logos */
+.race-logo {
+    max-height: 150px; /* Adjust max height as needed */
+}
+
+/* Add spacing between image and race name */
+.race-name {
+    margin-top: 10px; /* Adjust spacing between image and race name */
 }
 
 .hidden {
