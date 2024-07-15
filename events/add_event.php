@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>Add Running Race Event</h2>
-    <form action="process_form.php" method="post" id="eventForm">
+    <form action="process_form.php" method="post" id="eventForm" enctype="multipart/form-data">
         <label for="eventName">Event Name:</label><br>
         <input type="text" id="eventName" name="eventName" required><br>
 
@@ -31,6 +31,9 @@
 
         <label for="welcomeLetter">Welcome Letter (HTML Supported):</label><br>
         <textarea id="welcomeLetter" name="welcomeLetter" rows="10" cols="50"></textarea><br>
+
+        <label for="eventLogo">Event Logo:</label><br>
+        <input type="file" id="eventLogo" name="eventLogo"><br><br>
 
         <div id="categoryFields">
             <!-- JavaScript will add category fields dynamically -->
