@@ -23,6 +23,9 @@
             die("Connection failed: " . $conn->connect_error);
         }
 
+        // Initialize event name variable
+        $eventName = "";
+
         // Retrieve events from the database using prepared statement
         $sql = "SELECT id, event_name, event_logo FROM events WHERE enabled=true";
         $stmt = $conn->prepare($sql);
@@ -34,9 +37,10 @@
                 echo "<div class='race-box' data-event-id='" . htmlspecialchars($row["id"]) . "'>";
                 if ($row["event_logo"]) {
                     $logoPath = "../event_logos/" . htmlspecialchars($row["event_logo"]);
-                    echo "<img src='" . $logoPath . "' alt='Event Logo' class='race-logo'><br>"; // Added <br> here
+                    echo "<img src='" . $logoPath . "' alt='Event Logo' class='race-logo'><br>";
                 }
-                echo "<span class='race-name'>" . htmlspecialchars($row["event_name"]) . "</span></div>"; // Wrapped race name in span for styling
+                echo "<a href='registration.php?eventId=" . htmlspecialchars($row["id"]) . "' class='race-link'>";
+                echo "<span class='race-name'>" . htmlspecialchars($row["event_name"]) . "</span></a></div>";
             }
         }
 
@@ -45,8 +49,12 @@
         ?>
     </div>
 
+    <div id="eventDetailsContainer" class="hidden">
+        <h2 id="eventTitle">Registration Form</h2>
+        <p id="eventDescription">Select an event to proceed with registration.</p>
+    </div>
+
     <div id="registrationFormContainer" class="hidden">
-        <h2>Registration Form</h2>
         <form action="process_registration.php" method="post" id="registrationForm">
             <input type="hidden" id="eventId" name="eventId">
             
@@ -103,12 +111,20 @@
         document.querySelectorAll('.race-box').forEach(box => {
             box.addEventListener('click', function() {
                 var eventId = this.getAttribute('data-event-id');
+                var eventName = this.querySelector('.race-name').textContent;
+
+                // Update event details section
+                document.getElementById('eventTitle').textContent = "Registration Form - " + eventName;
+                document.getElementById('eventDescription').textContent = "You are registering for the event: " + eventName;
+
+                // Set eventId in hidden input
                 document.getElementById('eventId').value = eventId;
 
                 // Fetch categories for the selected event
                 populateCategories(eventId);
 
-                // Show the registration form
+                // Show the event details and registration form
+                document.getElementById('eventDetailsContainer').classList.remove('hidden');
                 document.getElementById('registrationFormContainer').classList.remove('hidden');
             });
         });
@@ -140,6 +156,15 @@
         // Disable submit button on form submit to prevent multiple submissions
         document.getElementById('registrationForm').addEventListener('submit', function() {
             document.getElementById('submitButton').disabled = true;
+        });
+
+        // Simulate event selection if eventId is passed in URL
+        document.addEventListener('DOMContentLoaded', function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var eventId = urlParams.get('eventId');
+            if (eventId) {
+                document.querySelector('.race-box[data-event-id="' + eventId + '"]').click();
+            }
         });
     </script>
 </body>
