@@ -1,109 +1,171 @@
-/* General styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Race Time - Registration Form</title>
+    <link rel="stylesheet" type="text/css" href="css/registration_style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h2>Race Selection</h2>
+    <div id="raceContainer">
+        <?php
+        include_once 'config.php';
+        $servername = DB_HOST;
+        $username = DB_USER;
+        $password = DB_PASSWORD;
+        $dbname = DB_NAME;
 
-h2 {
-    text-align: center;
-    color: #333;
-}
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
-/* Form styles (default for larger screens) */
-form {
-    width: 60%; /* Adjust this value as needed for larger screens */
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
 
-/* Input and button styles (default for larger screens) */
-label {
-    font-weight: bold;
-    font-size: 15px; /* Set font size to 20px */
-    text-align: center; /* Center labels horizontally */
-}
+        // Initialize event name variable
+        $eventName = "";
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-select,
-input[type="submit"] {
-    width: 100%; /* Full width for larger screens */
-    padding: 10px;
-    margin: 5px 0 15px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
+        // Retrieve events from the database using prepared statement
+        $sql = "SELECT id, event_name, event_logo FROM events WHERE enabled=true";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-/* Media query for smaller screens */
-@media screen and (max-width: 400px) {
-    /* Adjust styles for smaller screens here */
-    label {
-        font-size: 15px; /* Set font size to 15px for mobile */
-    }
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<div class='race-box' data-event-id='" . htmlspecialchars($row["id"]) . "'>";
+                if ($row["event_logo"]) {
+                    $logoPath = "../event_logos/" . htmlspecialchars($row["event_logo"]);
+                    echo "<img src='" . $logoPath . "' alt='Event Logo' class='race-logo'><br>";
+                }
+                echo "<a href='registration.php?eventId=" . htmlspecialchars($row["id"]) . "' class='race-link'>";
+                echo "<span class='race-name'>" . htmlspecialchars($row["event_name"]) . "</span></a></div>";
+            }
+        }
 
-    /* Form styles for mobile */
-    form {
-        width: 100%; /* Full width on mobile */
-    }
+        $stmt->close();
+        $conn->close();
+        ?>
+    </div>
 
-    /* Input and button styles for mobile */
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
-    select {
-        width: calc(100% - 20px); /* Adjust padding value as needed */
-    }
+    <div id="eventDetailsContainer" class="hidden">
+        <h2 id="eventTitle">Registration Form</h2>
+        <p id="eventDescription">Select an event to proceed with registration.</p>
+    </div>
 
-    input[type="submit"] {
-        width: 100%; /* Full width on mobile */
-    }
-}
+    <div id="registrationFormContainer" class="hidden">
+        <form action="process_registration.php" method="post" id="registrationForm">
+            <input type="hidden" id="eventId" name="eventId">
+            
+            <label for="categoryName">Κατηγορία:</label><br>
+            <select id="categoryName" name="categoryName" required disabled>
+                <option value="">Επιλέξτε κατηγορία</option>
+            </select><br><br>
 
-/* Styles for race boxes */
-#raceContainer {
-    text-align: center; /* Center align race boxes */
-}
+            <label for="firstName">Όνομα:</label><br>
+            <input type="text" id="firstName" name="firstName" required><br><br>
 
-.race-box {
-    display: inline-block;
-    width: 200px;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-}
+            <label for="lastName">Επίθετο:</label><br>
+            <input type="text" id="lastName" name="lastName" required><br><br>
 
-.race-box:hover {
-    background-color: #f0f0f0;
-}
+            <label for="dob">Ημ. Γέννησης:</label><br>
+            <input type="date" id="dob" name="dob" required><br><br>
 
-/* Max height for event logos */
-.race-logo {
-    max-height: 150px; /* Adjust max height as needed */
-}
+            <label for="sex">Φύλο:</label><br>
+            <select id="sex" name="sex" required>
+                <option value="Male">Άνδρας</option>
+                <option value="Female">Γυναίκα</option>
+            </select><br><br>
 
-/* Add spacing between image and race name */
-.race-name {
-    margin-top: 10px; /* Adjust spacing between image and race name */
-}
+            <label for="team">Ομάδα:</label><br>
+            <input type="text" id="team" name="team"><br><br>
 
-.hidden {
-    display: none;
-}
-#eventDescription {
-    font-size: 16px;
-    color: #555;
-    text-align: center;
-    margin-top: 10px;
-}
+            <label for="phoneNumber">Τηλ. Επικοινωνίας:</label><br>
+            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10}" required><br><br>
+
+            <label for="city">Πόλη:</label><br>
+            <input type="text" id="city" name="city" required><br><br>
+
+            <label for="safetyNumber">Τηλ. Έκτακτης Ανάγκης:</label><br>
+            <input type="text" id="safetyNumber" name="safetyNumber"><br><br>
+
+            <label for="tShirtSize">Μέγεθος Μπλούζας:</label><br>
+            <select id="tShirtSize" name="tShirtSize" required>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+            </select><br><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
+            <label for="acceptTerms">Αποδέχομαι τους <a href="#">όρους χρήσης</a></label><br><br>
+
+            <input type="submit" value="Register" id="submitButton">
+        </form>
+    </div>
+
+    <script>
+        document.querySelectorAll('.race-box').forEach(box => {
+            box.addEventListener('click', function() {
+                var eventId = this.getAttribute('data-event-id');
+                var eventName = this.querySelector('.race-name').textContent;
+
+                // Update event details section
+                document.getElementById('eventTitle').textContent = "Registration Form - " + eventName;
+                document.getElementById('eventDescription').textContent = "You are registering for the event: " + eventName;
+
+                // Set eventId in hidden input
+                document.getElementById('eventId').value = eventId;
+
+                // Fetch categories for the selected event
+                populateCategories(eventId);
+
+                // Show the event details and registration form
+                document.getElementById('eventDetailsContainer').classList.remove('hidden');
+                document.getElementById('registrationFormContainer').classList.remove('hidden');
+            });
+        });
+
+        function populateCategories(eventId) {
+            var categoryNameSelect = document.getElementById("categoryName");
+
+            // Enable category dropdown menu
+            categoryNameSelect.disabled = false;
+            categoryNameSelect.innerHTML = "<option value=''>Loading...</option>";
+
+            // Fetch categories for the selected event from the database
+            fetch("get_categories.php?eventId=" + eventId)
+                .then(response => response.json())
+                .then(categories => {
+                    // Populate category dropdown menu with retrieved categories
+                    categoryNameSelect.innerHTML = "<option value=''>Select Category</option>";
+                    categories.forEach(category => {
+                        var optionText = category.category_name + " - " + category.category_cost + "€";
+                        categoryNameSelect.innerHTML += "<option value='" + category.category_name + "'>" + optionText + "</option>";
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    categoryNameSelect.innerHTML = "<option value=''>Failed to Load Categories</option>";
+                });
+        }
+
+        // Disable submit button on form submit to prevent multiple submissions
+        document.getElementById('registrationForm').addEventListener('submit', function() {
+            document.getElementById('submitButton').disabled = true;
+        });
+
+        // Simulate event selection if eventId is passed in URL
+        document.addEventListener('DOMContentLoaded', function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var eventId = urlParams.get('eventId');
+            if (eventId) {
+                document.querySelector('.race-box[data-event-id="' + eventId + '"]').click();
+            }
+        });
+    </script>
+</body>
+</html>
